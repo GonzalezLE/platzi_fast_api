@@ -1,5 +1,6 @@
 #pyhon
 from typing import Optional,Dict
+from unittest import result
 
 #PYdantic
 from pydantic import BaseModel
@@ -11,6 +12,11 @@ from fastapi import Body,Query,Path
 app = FastAPI()
 
 #model
+
+class Location(BaseModel):
+    city : str
+    state : str
+    country : str
 
 class Person(BaseModel):
     first_name : str
@@ -56,3 +62,25 @@ def show_person(
     person_id: int = Path(...,gt=0)
 ):
     return {person_id: 'It exists'}
+
+
+
+# validaciones: request body 
+@app.put('/person/{person_id}')
+def update_person(
+    person_id: int = Path(
+        ...,
+        title='person id',
+        description='This is the person is',
+        gt=0
+    ),
+    person:Person = Body(...),
+    location:Location = Body(...)
+):
+    result = person.dict()
+    result.update(location.dict())
+    
+    return result
+    
+    
+    
