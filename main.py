@@ -23,9 +23,24 @@ class HairColor(Enum):
     
 
 class Location(BaseModel):
-    city : str
-    state : str
-    country : str
+    city : str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        example = 'puebla'    
+        )
+    state : str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        example = 'puebla'    
+        )
+    country : str = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        example = 'Mexico'
+        )
 
 class Person(BaseModel):
     first_name : str = Field(
@@ -45,14 +60,41 @@ class Person(BaseModel):
         )
     hair_color :Optional[HairColor] = Field(default=None)
     is_married :Optional[bool] = Field(default=None)
+    
+    class Config:
+        schema_extra={
+            'example':{
+                "first_name": "Luis Enrique",
+                "last_name": "Gonzalez Arellano",
+                "age": 25,
+                "hair_color": "black",
+                "is_married": False
+            }
+        }
 
 # path operation decoretor
 @app.get('/')
 def home():
     return {"Hello":"world"}
 
+
+def create_person_example_200():
+    return Person(
+        first_name = "Luis Enrique2",
+        last_name = "Gonzalez Arellano2",
+        age = 25,
+        hair_color = "red",
+        is_married = False
+    )
+
 # Request and Response Body
-@app.post('person/new')
+@app.post('person/new',
+          responses={
+              200:{
+                  'description' : 'This is a example for platzi studens',
+                  'content':{'application/json':{'example':create_person_example_200()}}
+              }
+          })
 def create_person(person: Person = Body(...)):
     return person
 
