@@ -88,7 +88,7 @@ def create_person_example_200():
     )
 
 # Request and Response Body
-@app.post('person/new',
+@app.post('/person/new',
           responses={
               200:{
                   'description' : 'This is a example for platzi studens',
