@@ -42,7 +42,8 @@ class Location(BaseModel):
         example = 'Mexico'
         )
 
-class Person(BaseModel):
+
+class PersonBase(BaseModel):
     first_name : str = Field(
         ...,
         min_length=1,
@@ -59,7 +60,7 @@ class Person(BaseModel):
         le=115
         )
     hair_color :Optional[HairColor] = Field(default=None)
-    is_married :Optional[bool] = Field(default=None)
+    is_married :Optional[bool] = Field(default=None)    
     
     class Config:
         schema_extra={
@@ -68,9 +69,18 @@ class Person(BaseModel):
                 "last_name": "Gonzalez Arellano",
                 "age": 25,
                 "hair_color": "black",
-                "is_married": False
+                "is_married": False,
+                "password":'This.Password**'
             }
         }
+
+
+class Person(PersonBase):
+    password : str = Field(...,min_length=8,example = 'This.Password**')
+
+# this model is for the response 
+class PersonAut(PersonBase):
+    pass
 
 # path operation decoretor
 @app.get('/')
@@ -84,17 +94,19 @@ def create_person_example_200():
         last_name = "Gonzalez Arellano2",
         age = 25,
         hair_color = "red",
-        is_married = False
+        is_married = False,
+        password = 'This.Password**'
     )
 
 # Request and Response Body
 @app.post('/person/new',
-          responses={
-              200:{
-                  'description' : 'This is a example for platzi studens',
-                  'content':{'application/json':{'example':create_person_example_200()}}
-              }
-          })
+        #   responses={
+        #       200:{
+        #           'description' : 'This is a example for platzi studens',
+        #           'content':{'application/json':{'example':create_person_example_200()}}
+        #       }
+        #   },
+          response_model = PersonAut       )   
 def create_person(person: Person = Body(...)):
     return person
 
@@ -107,12 +119,14 @@ def show_person(
         min_length=1,
         max_length=50,
         title='Person Name',
-        description= "this is the person name, It's between 1 and 50 characters"
+        description= "this is the person name, It's between 1 and 50 characters",
+        example = "Rocio" # => example
         ),
     age : str = Query(
         ...,
         title='Person Age',
-        description = 'This is a person age, it is required'
+        description = 'This is a person age, it is required',
+        example = 25 # => example
         )
 ):
     return { name:age}
@@ -122,7 +136,11 @@ def show_person(
 # validaciones Path parameters
 @app.get('/person/detail/{person_id}')
 def show_person(
-    person_id: int = Path(...,gt=0)
+    person_id: int = Path(
+        ...,
+        gt=0,
+        example=123
+        )
 ):
     return {person_id: 'It exists'}
 
@@ -133,9 +151,10 @@ def show_person(
 def update_person(
     person_id: int = Path(
         ...,
-        title='person id',
-        description='This is the person is',
-        gt=0
+        title = 'person id',
+        description = 'This is the person is',
+        gt = 0 ,
+        example = 123
     ),
     person:Person = Body(...),
     location:Location = Body(...)
