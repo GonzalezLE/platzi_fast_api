@@ -60,6 +60,7 @@ class Person(BaseModel):
         )
     hair_color :Optional[HairColor] = Field(default=None)
     is_married :Optional[bool] = Field(default=None)
+    password : str = Field(...,min_length=8,example = 'This.Password**')
     
     class Config:
         schema_extra={
@@ -68,9 +69,30 @@ class Person(BaseModel):
                 "last_name": "Gonzalez Arellano",
                 "age": 25,
                 "hair_color": "black",
-                "is_married": False
+                "is_married": False,
+                "password":'This.Password**'
             }
         }
+
+# this model is for the response 
+class PersonAut(BaseModel):
+    first_name : str = Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    last_name :str= Field(
+        ...,
+        min_length=1,
+        max_length=50
+        )
+    age :int = Field(
+        ...,
+        gt=0,
+        le=115
+        )
+    hair_color :Optional[HairColor] = Field(default=None)
+    is_married :Optional[bool] = Field(default=None)    
 
 # path operation decoretor
 @app.get('/')
@@ -84,17 +106,19 @@ def create_person_example_200():
         last_name = "Gonzalez Arellano2",
         age = 25,
         hair_color = "red",
-        is_married = False
+        is_married = False,
+        password = 'This.Password**'
     )
 
 # Request and Response Body
 @app.post('/person/new',
-          responses={
-              200:{
-                  'description' : 'This is a example for platzi studens',
-                  'content':{'application/json':{'example':create_person_example_200()}}
-              }
-          })
+        #   responses={
+        #       200:{
+        #           'description' : 'This is a example for platzi studens',
+        #           'content':{'application/json':{'example':create_person_example_200()}}
+        #       }
+        #   },
+          response_model = PersonAut       )   
 def create_person(person: Person = Body(...)):
     return person
 
