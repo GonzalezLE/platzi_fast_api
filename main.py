@@ -107,12 +107,14 @@ def show_person(
         min_length=1,
         max_length=50,
         title='Person Name',
-        description= "this is the person name, It's between 1 and 50 characters"
+        description= "this is the person name, It's between 1 and 50 characters",
+        example = "Rocio" # => example
         ),
     age : str = Query(
         ...,
         title='Person Age',
-        description = 'This is a person age, it is required'
+        description = 'This is a person age, it is required',
+        example = 25 # => example
         )
 ):
     return { name:age}
@@ -122,7 +124,11 @@ def show_person(
 # validaciones Path parameters
 @app.get('/person/detail/{person_id}')
 def show_person(
-    person_id: int = Path(...,gt=0)
+    person_id: int = Path(
+        ...,
+        gt=0,
+        example=123
+        )
 ):
     return {person_id: 'It exists'}
 
@@ -133,9 +139,10 @@ def show_person(
 def update_person(
     person_id: int = Path(
         ...,
-        title='person id',
-        description='This is the person is',
-        gt=0
+        title = 'person id',
+        description = 'This is the person is',
+        gt = 0 ,
+        example = 123
     ),
     person:Person = Body(...),
     location:Location = Body(...)
