@@ -42,40 +42,8 @@ class Location(BaseModel):
         example = 'Mexico'
         )
 
-class Person(BaseModel):
-    first_name : str = Field(
-        ...,
-        min_length=1,
-        max_length=50
-        )
-    last_name :str= Field(
-        ...,
-        min_length=1,
-        max_length=50
-        )
-    age :int = Field(
-        ...,
-        gt=0,
-        le=115
-        )
-    hair_color :Optional[HairColor] = Field(default=None)
-    is_married :Optional[bool] = Field(default=None)
-    password : str = Field(...,min_length=8,example = 'This.Password**')
-    
-    class Config:
-        schema_extra={
-            'example':{
-                "first_name": "Luis Enrique",
-                "last_name": "Gonzalez Arellano",
-                "age": 25,
-                "hair_color": "black",
-                "is_married": False,
-                "password":'This.Password**'
-            }
-        }
 
-# this model is for the response 
-class PersonAut(BaseModel):
+class PersonBase(BaseModel):
     first_name : str = Field(
         ...,
         min_length=1,
@@ -93,6 +61,26 @@ class PersonAut(BaseModel):
         )
     hair_color :Optional[HairColor] = Field(default=None)
     is_married :Optional[bool] = Field(default=None)    
+    
+    class Config:
+        schema_extra={
+            'example':{
+                "first_name": "Luis Enrique",
+                "last_name": "Gonzalez Arellano",
+                "age": 25,
+                "hair_color": "black",
+                "is_married": False,
+                "password":'This.Password**'
+            }
+        }
+
+
+class Person(PersonBase):
+    password : str = Field(...,min_length=8,example = 'This.Password**')
+
+# this model is for the response 
+class PersonAut(PersonBase):
+    pass
 
 # path operation decoretor
 @app.get('/')
