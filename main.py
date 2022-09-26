@@ -9,6 +9,7 @@ from pydantic import Field
 
 #FastAPI
 from fastapi import FastAPI
+from fastapi import status
 from fastapi import Body,Query,Path
 
 app = FastAPI()
@@ -83,7 +84,10 @@ class PersonAut(PersonBase):
     pass
 
 # path operation decoretor
-@app.get('/')
+@app.get(
+    path='/',
+    status_code=status.HTTP_200_OK
+    )
 def home():
     return {"Hello":"world"}
 
@@ -99,20 +103,20 @@ def create_person_example_200():
     )
 
 # Request and Response Body
-@app.post('/person/new',
-        #   responses={
-        #       200:{
-        #           'description' : 'This is a example for platzi studens',
-        #           'content':{'application/json':{'example':create_person_example_200()}}
-        #       }
-        #   },
-          response_model = PersonAut       )   
+@app.post(
+    path= '/person/new',
+    response_model = PersonAut,
+    status_code=status.HTTP_201_CREATED
+    )   
 def create_person(person: Person = Body(...)):
     return person
 
 
 
-@app.get('/person/detail')
+@app.get(
+    path= '/person/detail',
+    status_code=status.HTTP_200_OK
+    )
 def show_person(
     name : Optional[str] = Query(
         None,
@@ -134,7 +138,10 @@ def show_person(
 
 
 # validaciones Path parameters
-@app.get('/person/detail/{person_id}')
+@app.get(
+    path = '/person/detail/{person_id}',
+    status_code = status.HTTP_200_OK
+    )
 def show_person(
     person_id: int = Path(
         ...,
@@ -147,7 +154,10 @@ def show_person(
 
 
 # validaciones: request body 
-@app.put('/person/{person_id}')
+@app.put(
+    path = '/person/{person_id}',
+    status_code = status.HTTP_200_OK
+    )
 def update_person(
     person_id: int = Path(
         ...,
