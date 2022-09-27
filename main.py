@@ -1,6 +1,6 @@
 #pyhon
 
-from typing import Optional,Dict
+from typing import List, Optional,Dict
 from enum import Enum
 
 #PYdantic
@@ -11,7 +11,7 @@ from pydantic import EmailStr
 #FastAPI
 from fastapi import FastAPI
 from fastapi import status
-from fastapi import Body,Query,Path,Form,Header,Cookie
+from fastapi import Body,Query,Path,Form,Header,Cookie,UploadFile,File
 
 app = FastAPI()
 
@@ -222,3 +222,33 @@ def contact(
     return user_agent
 
 
+# Files
+
+
+@app.post(
+    path='/post-image'
+)
+def post_image(
+    image:UploadFile = File(...)
+):
+    return {
+        "Filename" : image.filename,
+        "Format" : image.content_type,
+        "Size(kb)" :round(len(image.file.read())/1024,ndigits=2)
+    }
+    
+    
+    
+@app.post(
+    path='/post-image-multiple'
+)
+def post_image_multiple(
+    images: List[UploadFile] = File(...)
+):
+    info_images = [{
+        "filename": image.filename,
+        "Format": image.content_type,
+        "Size(kb)": round(len(image.file.read())/1024, ndigits=2)
+    } for image in images]
+
+    return info_images
