@@ -7,11 +7,11 @@ from enum import Enum
 from pydantic import BaseModel
 from pydantic import Field
 from pydantic import SecretStr
-
+from pydantic import EmailStr
 #FastAPI
 from fastapi import FastAPI
 from fastapi import status
-from fastapi import Body,Query,Path,Form
+from fastapi import Body,Query,Path,Form,Header,Cookie
 
 app = FastAPI()
 
@@ -179,7 +179,9 @@ def update_person(
     result.update(location.dict())
     
     return result
-    
+
+
+# Form    
     
 @app.post(
     path='/login',
@@ -188,3 +190,35 @@ def update_person(
 )
 def login(username : str  = Form(...),password : SecretStr = Form(...)):
     return LoginOut(username=username)
+
+
+# cookies and Headers parameters
+
+@app.post(
+    path='/contact',
+    status_code=status.HTTP_200_OK
+)
+def contact(
+    first_name: str = Form(
+        ...,
+        max_length=20,
+        min_length=1
+    ),
+    last_name: str = Form(
+        ...,
+        max_length=20,
+        min_length=1
+    ),
+    email:EmailStr= Form(
+        ...
+    ),
+    message:str = Form(
+        ...,
+        min_length = 20
+    ),
+    user_agent:Optional[str] = Header(default=None),
+    ads: Optional[str] = Cookie(default=None)
+):
+    return user_agent
+
+
