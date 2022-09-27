@@ -6,11 +6,12 @@ from enum import Enum
 #PYdantic
 from pydantic import BaseModel
 from pydantic import Field
+from pydantic import SecretStr
 
 #FastAPI
 from fastapi import FastAPI
 from fastapi import status
-from fastapi import Body,Query,Path
+from fastapi import Body,Query,Path,Form
 
 app = FastAPI()
 
@@ -82,6 +83,11 @@ class Person(PersonBase):
 # this model is for the response 
 class PersonAut(PersonBase):
     pass
+
+
+class LoginOut(BaseModel):
+    username:str = Field(...,max_length=20,example='GonzalezLE')
+    message: str = Field(default='Login successful :)', description='Description message')
 
 # path operation decoretor
 @app.get(
@@ -175,4 +181,10 @@ def update_person(
     return result
     
     
-    
+@app.post(
+    path='/login',
+    response_model=LoginOut,
+    status_code=status.HTTP_200_OK
+)
+def login(username : str  = Form(...),password : SecretStr = Form(...)):
+    return LoginOut(username=username)
