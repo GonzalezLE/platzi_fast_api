@@ -92,7 +92,8 @@ class LoginOut(BaseModel):
 # path operation decoretor
 @app.get(
     path='/',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    tags=['Page']
     )
 def home():
     return {"Hello":"world"}
@@ -112,7 +113,8 @@ def create_person_example_200():
 @app.post(
     path= '/person/new',
     response_model = PersonAut,
-    status_code=status.HTTP_201_CREATED
+    status_code=status.HTTP_201_CREATED,
+    tags=['Persons']
     )   
 def create_person(person: Person = Body(...)):
     return person
@@ -121,7 +123,8 @@ def create_person(person: Person = Body(...)):
 
 @app.get(
     path= '/person/detail',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    tags=['Persons']
     )
 def show_person(
     name : Optional[str] = Query(
@@ -146,7 +149,8 @@ persons = [1, 2, 3, 4 ,5]
 # validaciones Path parameters
 @app.get(
     path = '/person/detail/{person_id}',
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags=['Persons']
     )
 def show_person(
     person_id: int = Path(
@@ -167,7 +171,8 @@ def show_person(
 # validaciones: request body 
 @app.put(
     path = '/person/{person_id}',
-    status_code = status.HTTP_200_OK
+    status_code = status.HTTP_200_OK,
+    tags=['Persons']
     )
 def update_person(
     person_id: int = Path(
@@ -191,7 +196,8 @@ def update_person(
 @app.post(
     path='/login',
     response_model=LoginOut,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    tags=['Persons']
 )
 def login(username : str  = Form(...),password : SecretStr = Form(...)):
     return LoginOut(username=username)
@@ -201,7 +207,8 @@ def login(username : str  = Form(...),password : SecretStr = Form(...)):
 
 @app.post(
     path='/contact',
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
+    tags=['Page']
 )
 def contact(
     first_name: str = Form(
@@ -231,7 +238,8 @@ def contact(
 
 
 @app.post(
-    path='/post-image'
+    path='/post-image',
+    tags=['Page']
 )
 def post_image(
     image:UploadFile = File(...)
@@ -245,7 +253,8 @@ def post_image(
     
     
 @app.post(
-    path='/post-image-multiple'
+    path='/post-image-multiple',
+    tags=['Page']
 )
 def post_image_multiple(
     images: List[UploadFile] = File(...)
